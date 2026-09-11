@@ -1,8 +1,8 @@
 # CACv Supermarket – SME Procurement-Preparation Agent
 
-**Course:** BSE4104 Emerging Trends in Software Engineering – 8-Week AI-Native & Agentic Engineering Capstone
-**Institution:** Makerere University, College of Computing and Information Sciences
-**Team:** [Add group name and member names here]
+Course: BSE4104 Emerging Trends in Software Engineering – 8-Week AI-Native & Agentic Engineering Capstone
+Institution: Makerere University, College of Computing and Information Sciences
+Team: 
 
 ## Problem
 

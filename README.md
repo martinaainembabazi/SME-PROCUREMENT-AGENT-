@@ -47,3 +47,22 @@ Week 1 of 8 — problem framing, requirements and repository/task-board setup.
 ## AI Use Declaration
 
 This project uses AI assistance (e.g. Claude) for design, coding, documentation and evaluation support. See `docs/ai-engineering-log.md` for a running log of material AI-assisted decisions.
+
+
+## Week 2 base model implementation
+## Setup
+
+1. Clone the repo
+2. Create and activate a virtual environment:
+   - Windows: `python -m venv venv && venv\Scripts\activate`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Copy `.env.example` to `.env` and add your `GEMINI_API_KEY`
+5. Run the baseline: `python src/baseline_demo.py`
+6. Run the evaluation: `python tests/run_eval.py`
+
+## Model Integration
+- Model: Gemini (configured via `MODEL_NAME` in `.env`, default `gemini-3.6-flash`)
+- Client: `src/model_client.py`
+- Prompts: versioned in `prompts/sme_procurement/` via `manifest.json`
+- Prompt loader: `src/prompt_loader.py`
+

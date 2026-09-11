@@ -1,0 +1,11 @@
+{
+  "active_version": "v1.0",
+  "versions": {
+    "v1.0": {
+      "system": "v1.0_system.txt",
+      "user_template": "v1.0_user_template.txt",
+      "created": "2026-09-11",
+      "notes": "Initial baseline prompt for SME procurement assistant"
+    }
+  }
+}

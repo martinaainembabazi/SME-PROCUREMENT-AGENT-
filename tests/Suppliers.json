@@ -1,0 +1,11 @@
+[
+  {"item": "Fresh Milk 1L", "supplier": "Jesa Farm Dairy", "unit_price": 3500, "quantity": 30, "lead_time_days": 1},
+  {"item": "Fresh Milk 1L", "supplier": "GBK Dairy Products", "unit_price": 3300, "quantity": 30, "lead_time_days": 2},
+
+  {"item": "White Rice 5kg", "supplier": "Tilda Uganda", "unit_price": 28000, "quantity": 20, "lead_time_days": 3},
+  {"item": "White Rice 5kg", "supplier": "Mukwano Group", "unit_price": 27500, "quantity": 20, "lead_time_days": 4},
+
+  {"item": "Canned Beans 400g", "supplier": "Mukwano Group", "unit_price": 4200, "quantity": 15, "lead_time_days": 2},
+
+  {"item": "Cooking Oil 3L", "supplier": "Mukwano Group", "unit_price": 32000, "quantity": 10, "lead_time_days": 2}
+]

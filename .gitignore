@@ -4,4 +4,4 @@ __pycache__/
 *.pyc
 .vscode/
 .idea/
-.DS_Store
+.DS_Store.env

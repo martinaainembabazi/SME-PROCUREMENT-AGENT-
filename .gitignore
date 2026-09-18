@@ -5,7 +5,11 @@ __pycache__/
 .vscode/
 .idea/
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 .DS_Store
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
 =======
 .DS_Store.env
 >>>>>>> Stashed changes

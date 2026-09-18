@@ -1,0 +1,6 @@
+item_code,item_name,unit,price_ugx,moq,lead_time_days,payment_terms,origin
+CEM50,Portland Cement 50kg,bag,31500,100,21,Net 45,Tororo
+NAIL1,Nails 1kg box,box,8900,15,5,Cash on delivery,Kampala
+IRON30,Iron Sheets 30g,sheet,43500,20,14,Net 30,Jinja
+PAINT20,Wall Paint 20L,bucket,92000,10,12,Net 30,Kampala
+TIMB12,Timber 2x4x12ft,piece,27500,50,25,50% deposit,Mbale

@@ -1,0 +1,24 @@
+{
+  "request_id": "QR-001",
+  "comparison": [
+    {
+      "item_code": "CEM50",
+      "quotes": [
+        {"supplier": "A", "price_ugx": 32000, "moq": 50, "lead_time_days": 14, "payment_terms": "Net 30"},
+        {"supplier": "B", "price_ugx": 31500, "moq": 100, "lead_time_days": 21, "payment_terms": "Net 45"},
+        {"supplier": "C", "price_ugx": 33000, "moq": 25, "lead_time_days": 10, "payment_terms": "Net 15"}
+      ],
+      "notes": "Supplier B cheapest but 21-day lead time; Supplier C fastest but most expensive."
+    },
+    {
+      "item_code": "NAIL1",
+      "quotes": [
+        {"supplier": "A", "price_ugx": 8500, "moq": 20, "lead_time_days": 7, "payment_terms": "Cash on delivery"},
+        {"supplier": "B", "price_ugx": 8900, "moq": 15, "lead_time_days": 5, "payment_terms": "Cash on delivery"},
+        {"supplier": "C", "price_ugx": 8400, "moq": 25, "lead_time_days": 9, "payment_terms": "Net 30"}
+      ],
+      "notes": "Supplier C cheapest per unit but highest MOQ."
+    }
+  ],
+  "decision_status": "pending_human_review"
+}

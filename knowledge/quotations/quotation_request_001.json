@@ -1,0 +1,11 @@
+{
+  "request_id": "QR-001",
+  "date": "2026-09-10",
+  "prepared_by": "SME Procurement Agent (simulated)",
+  "items": [
+    {"item_code": "CEM50", "item_name": "Portland Cement 50kg", "qty": 100, "unit": "bag"},
+    {"item_code": "NAIL1", "item_name": "Nails 1kg box", "qty": 30, "unit": "box"}
+  ],
+  "suppliers_contacted": ["A", "B", "C"],
+  "notes": "For comparison purposes only. No orders placed."
+}

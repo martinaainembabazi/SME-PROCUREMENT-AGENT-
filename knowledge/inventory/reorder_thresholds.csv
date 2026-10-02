@@ -1,0 +1,6 @@
+item_code,item_name,criticality,min_stock,max_stock,notes
+CEM50,Portland Cement 50kg,High,20,120,High turnover; core product
+NAIL1,Nails 1kg box,Medium,10,60,Stable demand
+IRON30,Iron Sheets 30g,High,10,40,Long lead time; plan ahead
+PAINT20,Wall Paint 20L,Low,5,25,Seasonal spikes
+TIMB12,Timber 2x4x12ft,High,30,100,Bulk orders preferred

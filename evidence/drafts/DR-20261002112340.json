@@ -1,0 +1,11 @@
+{
+  "draft_id": "DR-20261002112340",
+  "item_code": "CEM50",
+  "item_name": "Portland Cement 50kg",
+  "quantity": 50,
+  "supplier_name": "Supplier A",
+  "notes": "Reorder Portland Cement 50kg as current stock (12 bags) is below reorder threshold (20 bags). Supplier A selected for optimal balance of lead time (14 days) and reasonable MOQ (50 bags).",
+  "status": "pending_human_approval",
+  "created_at": "2026-10-02T11:23:40.629055+00:00",
+  "policy": "No purchase is finalized without human approval."
+}

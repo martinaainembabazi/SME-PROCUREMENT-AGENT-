@@ -1,17 +1,24 @@
 {
+<<<<<<< Updated upstream
   "active_version": "v1.2",
+=======
+  "active_version": "v1.0",
+>>>>>>> Stashed changes
   "versions": {
     "v1.0": {
       "system": "v1.0_system.txt",
       "user_template": "v1.0_user_template.txt",
       "created": "2026-09-11",
       "notes": "Initial baseline prompt for SME procurement assistant"
+<<<<<<< Updated upstream
     },
     "v1.2": {
       "system": "v1.2_planner_system.txt",
       "user_template": "v1.2_planner_user.txt",
       "created": "2026-10-02",
       "notes": "Week 5 planner prompt — bounded agent decision loop, JSON output, 6 final statuses per Agent Task Contract"
+=======
+>>>>>>> Stashed changes
     }
   }
 }

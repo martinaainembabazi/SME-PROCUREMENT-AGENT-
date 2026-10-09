@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-10-09T12:38:01.679015+00:00",
+  "scenarios": [
+    {
+      "scenario": "1_first_request_no_record_human_approves",
+      "expected": "No pre-fill before approval; record written after approval.",
+      "memory_before_approval": null,
+      "draft_id": "DR-20261009123801",
+      "approved_supplier": "B",
+      "memory_after_approval": {
+        "item_code": "CEM50",
+        "item_name": "Portland Cement 50kg",
+        "approved_supplier": "B",
+        "approved_unit_price_ugx": 31500.0,
+        "approved_quantity": 50,
+        "source_draft_id": "DR-20261009123801",
+        "approved_by": "Procurement Officer",
+        "approved_at": "2026-10-09T12:38:01.565895+00:00"
+      }
+    },
+    {
+      "scenario": "2_same_item_again",
+      "expected": "Approved supplier pre-filled with source label.",
+      "memory_record": {
+        "item_code": "CEM50",
+        "item_name": "Portland Cement 50kg",
+        "approved_supplier": "B",
+        "approved_unit_price_ugx": 31500.0,
+        "approved_quantity": 50,
+        "source_draft_id": "DR-20261009123801",
+        "approved_by": "Procurement Officer",
+        "approved_at": "2026-10-09T12:38:01.565895+00:00"
+      },
+      "prefill_label": "last approved on 2026-10-09T12:38:01.565895+00:00, draft DR-20261009123801"
+    },
+    {
+      "scenario": "3_cheaper_supplier_now_quoted",
+      "expected": "Both shown; human still decides; memory does not override.",
+      "remembered_supplier": "B",
+      "live_quotes": [
+        {
+          "supplier": "B",
+          "price_ugx": 31500,
+          "moq": 100,
+          "lead_time_days": 21,
+          "payment_terms": "Net 45"
+        },
+        {
+          "supplier": "A",
+          "price_ugx": 32000,
+          "moq": 50,
+          "lead_time_days": 14,
+          "payment_terms": "Net 30"
+        },
+        {
+          "supplier": "C",
+          "price_ugx": 33000,
+          "moq": 25,
+          "lead_time_days": 10,
+          "payment_terms": "Net 15"
+        }
+      ],
+      "recommendation_from_live_data": {
+        "supplier": "B",
+        "price_ugx": 31500,
+        "lead_time_days": 21,
+        "payment_terms": "Net 45"
+      },
+      "override_happened": false
+    },
+    {
+      "scenario": "4_draft_rejected_no_write",
+      "expected": "Nothing written to memory.",
+      "memory_before": null,
+      "memory_after": null,
+      "note": "Rejected drafts never reach the approval path, so no write occurs."
+    },
+    {
+      "scenario": "5_memory_missing_or_unreadable",
+      "expected": "Agent drafts normally and reports no preference found.",
+      "memory_record": null,
+      "draft_id": "DR-20261009123801",
+      "note": "Fail-safe path confirmed: unreadable memory returns None. Original memory restored after test."
+    }
+  ],
+  "memory_file": "C:\\Users\\joelt\\Desktop\\AI\\Capston\\SME-PROCUREMENT-AGENT-\\evidence\\memory\\approved_supplier_memory.json",
+  "log_file": "C:\\Users\\joelt\\Desktop\\AI\\Capston\\SME-PROCUREMENT-AGENT-\\evidence\\memory\\memory_log.jsonl",
+  "memory_file_exists": true
+}

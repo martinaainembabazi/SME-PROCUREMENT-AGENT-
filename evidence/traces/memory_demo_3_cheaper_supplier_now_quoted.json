@@ -1,0 +1,35 @@
+{
+  "scenario": "3_cheaper_supplier_now_quoted",
+  "expected": "Both shown; human still decides; memory does not override.",
+  "remembered_supplier": "B",
+  "live_quotes": [
+    {
+      "supplier": "B",
+      "price_ugx": 31500,
+      "moq": 100,
+      "lead_time_days": 21,
+      "payment_terms": "Net 45"
+    },
+    {
+      "supplier": "A",
+      "price_ugx": 32000,
+      "moq": 50,
+      "lead_time_days": 14,
+      "payment_terms": "Net 30"
+    },
+    {
+      "supplier": "C",
+      "price_ugx": 33000,
+      "moq": 25,
+      "lead_time_days": 10,
+      "payment_terms": "Net 15"
+    }
+  ],
+  "recommendation_from_live_data": {
+    "supplier": "B",
+    "price_ugx": 31500,
+    "lead_time_days": 21,
+    "payment_terms": "Net 45"
+  },
+  "override_happened": false
+}

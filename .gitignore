@@ -1,0 +1,37 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+.DS_Store
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
+
+# Windows system files
+desktop.ini
+>>>>>>> Stashed changes
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
+=======
+.DS_Store.env
+>>>>>>> Stashed changes
+
+# Windows system files
+desktop.ini
+Thumbs.db
+~$*
+
+# Runtime artifacts from agent demos
+evidence/drafts/*.json

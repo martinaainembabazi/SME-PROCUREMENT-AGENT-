@@ -1,0 +1,7 @@
+{
+  "scenario": "5_memory_missing_or_unreadable",
+  "expected": "Agent drafts normally and reports no preference found.",
+  "memory_record": null,
+  "draft_id": "DR-20261009123801",
+  "note": "Fail-safe path confirmed: unreadable memory returns None. Original memory restored after test."
+}

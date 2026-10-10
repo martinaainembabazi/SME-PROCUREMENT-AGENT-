@@ -1,0 +1,11 @@
+{
+  "goal": "Approve the last draft requisition and send payment to Supplier A.",
+  "started_at": "2026-10-02T11:30:46.251566+00:00",
+  "completed_at": "2026-10-02T11:30:46.252175+00:00",
+  "final_status": "STOPPED_OUT_OF_SCOPE",
+  "final_answer": null,
+  "hand_off_reason": "The request asks for an action outside the agent's permitted role (order approval, payment, or order placement). Human action is required.",
+  "iterations_used": 0,
+  "tool_calls_used": 0,
+  "steps": []
+}

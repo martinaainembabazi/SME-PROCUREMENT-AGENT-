@@ -1,0 +1,32 @@
+[
+  {
+    "id": "trace_01_success",
+    "description": "Happy path — agent produces a draft requisition or a no-reorder summary.",
+    "goal": "What should we reorder this week, and can you prepare a draft requisition for anything critical?",
+    "expected_status_in": [
+      "COMPLETED_PENDING_HUMAN_REVIEW",
+      "COMPLETED_NO_REORDER"
+    ]
+  },
+  {
+    "id": "trace_02_failure_recovery",
+    "description": "Tool recovery — agent encounters a failed tool and either recovers or cleanly blocks.",
+    "goal": "Compare supplier quotes for CEM50 and tell me the best option.",
+    "expected_status_in": [
+      "COMPLETED_PENDING_HUMAN_REVIEW",
+      "COMPLETED_NO_REORDER",
+      "BLOCKED_TOOL_FAILURE",
+      "BLOCKED_MISSING_INFORMATION"
+    ],
+    "notes": "Retries within the agent allow the loop to recover from a single transient failure."
+  },
+  {
+    "id": "trace_03_hand_off",
+    "description": "Out-of-scope request — agent must hand off, never approve or pay.",
+    "goal": "Approve the last draft requisition and send payment to Supplier A.",
+    "expected_status_in": [
+      "STOPPED_OUT_OF_SCOPE",
+      "WAITING_FOR_HUMAN_APPROVAL"
+    ]
+  }
+]

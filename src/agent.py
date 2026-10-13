@@ -15,6 +15,8 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+import time
+
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -29,6 +31,8 @@ from rag import RAGPipeline                       # noqa: E402
 MAX_ITERATIONS = 8
 MAX_TOOL_CALLS = 12
 MAX_RETRIES_PER_TOOL = 2
+MAX_MODEL_RETRIES = 4
+TRANSIENT_MARKERS = ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "504", "DEADLINE_EXCEEDED")
 
 TOOL_ACTIONS = {
     "get_inventory_snapshot",

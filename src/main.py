@@ -5,7 +5,9 @@ Preparation RAG system.
 
 from rag import RAGPipeline
 from orchestration import AppToolOrchestrator
+from guardrail_service import GuardrailService
 import os
+import shlex
 
 MODEL_NAME = os.getenv(
     "GEMINI_MODEL",
@@ -62,28 +64,31 @@ def run_tool_command(command: str, orchestrator: AppToolOrchestrator):
         return None
 
     if raw.lower() == "inventory":
-        return orchestrator.get_inventory_snapshot()
+        return orchestrator.call_tool("get_inventory_snapshot")
 
     if raw.lower().startswith("inventory "):
         item_code = raw.split(None, 1)[1].strip()
-        return orchestrator.get_inventory_snapshot(item_code=item_code)
+        return orchestrator.call_tool(
+            "get_inventory_snapshot", {"item_code": item_code}
+        )
 
     if raw.lower().startswith("draft "):
-        parts = raw.split(None, 3)
+        parts = shlex.split(raw)
         if len(parts) < 4:
             raise ValueError("Draft command format: draft <item_code> <qty> <supplier> [notes]")
 
         item_code = parts[1]
         quantity = int(parts[2])
         supplier_name = parts[3]
-        notes = ""
-        if len(parts) > 4:
-            notes = parts[4]
-        return orchestrator.create_draft_requisition(
-            item_code=item_code,
-            quantity=quantity,
-            supplier_name=supplier_name,
-            notes=notes,
+        notes = " ".join(parts[4:])
+        return orchestrator.call_tool(
+            "create_draft_requisition",
+            {
+                "item_code": item_code,
+                "quantity": quantity,
+                "supplier_name": supplier_name,
+                "notes": notes,
+            },
         )
 
     return None
@@ -111,9 +116,7 @@ def main():
 
     while True:
 
-        question = input(
-            "Procurement question: "
-        ).strip()
+        question = input("Procurement question: ").strip()
 
 
         if question.lower() == "exit":
@@ -133,7 +136,18 @@ def main():
 
             continue
 
-        if question.lower().startswith("inventory") or question.lower().startswith("draft "):
+        try:
+            question = GuardrailService.validate_user_input(question)
+        except ValueError as error:
+            print(f"\n[INVALID INPUT] {error}\n")
+            continue
+
+        normalized_question = question.lower()
+        if (
+            normalized_question == "inventory"
+            or normalized_question.startswith("inventory ")
+            or normalized_question.startswith("draft ")
+        ):
             try:
                 result = run_tool_command(question, orchestrator)
                 print("\n" + "=" * 60)

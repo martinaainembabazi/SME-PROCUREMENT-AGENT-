@@ -1,5 +1,5 @@
 {
-  "active_version": "v1.2",
+  "active_version": "v1.3",
   "versions": {
     "v1.0": {
       "system": "v1.0_system.txt",
@@ -12,6 +12,12 @@
       "user_template": "v1.2_planner_user.txt",
       "created": "2026-10-02",
       "notes": "Week 5 planner prompt - bounded agent decision loop, JSON output, 6 final statuses per Agent Task Contract"
+    },
+    "v1.3": {
+      "system": "v1.3_planner_system.txt",
+      "user_template": "v1.2_planner_user.txt",
+      "created": "2026-10-16",
+      "notes": "Adds prompt-injection awareness, strict decision output expectations, and explicit approval boundaries"
     }
   }
 }

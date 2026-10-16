@@ -93,3 +93,14 @@ The agent's authority ends at procurement **preparation**:
 - ❌ May **not** approve a purchase
 - ❌ May **not** place an order
 - ❌ May **not** execute or authorize payment
+
+## Runtime Security Controls
+
+- `src/guardrail_service.py` provides the shared `GuardrailService` policy surface for user input, planner JSON, tool arguments/results, retrieved context, completion claims, authorization, and loop limits.
+- User requests, planner JSON, tool arguments, tool results, and retrieved documents are validated at their application boundaries. Unknown fields/actions, malformed JSON, invalid types, control characters, and oversized inputs/results are rejected.
+- `ProcurementAgent` enforces hard ceilings of **8 iterations** and **12 tool calls**, and blocks a repeated identical tool call.
+- `AppToolOrchestrator.call_tool` is the allow-list and authorization boundary. The `agent` principal may read and create drafts; `viewer` may only read. The `principal` must be supplied by trusted host code and must never be taken from the prompt or model output. This role policy is not an authentication provider.
+- No model-facing tool can approve, submit, finalize, order, or pay. Draft records and their tool results are validated to remain `pending_human_approval`.
+- Completion claims require tool evidence: a pending draft for `COMPLETED_PENDING_HUMAN_REVIEW`, or available non-empty inventory with no reorder candidates for `COMPLETED_NO_REORDER`.
+- The approval workflow is external to the agent. Any host that calls approval/memory APIs must authenticate and authorize the human approver independently.
+- Retrieved content and user text are serialized as data and explicitly treated as untrusted. Prompt-injection instructions in those sources do not grant authority or change the tool policy.

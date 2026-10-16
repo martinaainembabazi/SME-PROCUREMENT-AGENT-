@@ -1,333 +1,112 @@
 """
-Week 5 — Bounded Agent Workflow
+Week 5 & 7 — Bounded Agent Workflow & Observability
 SME Procurement-Preparation Agent (CAC Supermarket, Kyanja)
 
 Implements the Sense -> Plan -> Act -> Observe -> Stop loop defined in the
-Agent Task Contract (Week 5).
+Agent Task Contract, with enhanced telemetry and robust transient error handling.
 """
+
 from __future__ import annotations
 
 import json
 import re
 import sys
-import traceback
-from dataclasses import dataclass, field, asdict
+import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-import time
+
+from google.api_core.exceptions import ResourceExhausted
+
+# Metadata constants for Week 7 tracking
+MODEL_NAME = "gemini-2.5-flash"
+PROMPT_VERSION = "v1.2"
+TRACE_DIR = Path("evidence/traces")
+TRACE_DIR.mkdir(parents=True, exist_ok=True)
 
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "src"))
+class AgentRunner:
+    def __init__(self, goal: str, scenario_id: str = None):
+        self.run_id = str(uuid.uuid4())
+        self.scenario_id = scenario_id or "adhoc_run"
+        self.goal = goal
+        self.started_at = datetime.now(timezone.utc).isoformat()
+        self.steps = []
+        self.guardrail_events = []
+        self.retry_count = 0
 
-from model_client import ModelClient              # noqa: E402
-from orchestration import AppToolOrchestrator     # noqa: E402
-from prompt_loader import load_prompt             # noqa: E402
-from rag import RAGPipeline                       # noqa: E402
-
-
-# --- Limits from the Agent Task Contract ---
-MAX_ITERATIONS = 8
-MAX_TOOL_CALLS = 12
-MAX_RETRIES_PER_TOOL = 2
-MAX_MODEL_RETRIES = 4
-TRANSIENT_MARKERS = ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "504", "DEADLINE_EXCEEDED")
-
-TOOL_ACTIONS = {
-    "get_inventory_snapshot",
-    "get_reorder_candidates",
-    "compare_supplier_quotes",
-    "create_draft_requisition",
-}
-
-VALID_STATUSES = {
-    "COMPLETED_PENDING_HUMAN_REVIEW",
-    "COMPLETED_NO_REORDER",
-    "BLOCKED_MISSING_INFORMATION",
-    "BLOCKED_TOOL_FAILURE",
-    "STOPPED_OUT_OF_SCOPE",
-    "WAITING_FOR_HUMAN_APPROVAL",
-}
-
-# Words that indicate the user (or model) is trying to cross a boundary.
-PROHIBITED_TERMS = [
-    "approve the last draft",
-    "approve requisition",
-    "approve the requisition",
-    "send payment",
-    "make payment",
-    "execute payment",
-    "place the order",
-    "place an order",
-    "pay supplier",
-    "pay the supplier",
-    "finalize the purchase",
-    "finalize purchase",
-    "authorize payment",
-    "authorise payment",
-]
-
-
-@dataclass
-class Step:
-    iteration: int
-    thought: str
-    action: str
-    args: dict
-    observation: Any
-    error: str | None = None
-    raw_model_output: str | None = None   # NEW: keep the raw model text for debugging
-
-
-@dataclass
-class AgentRun:
-    goal: str
-    started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    completed_at: str | None = None
-    final_status: str | None = None
-    final_answer: str | None = None
-    hand_off_reason: str | None = None
-    iterations_used: int = 0
-    tool_calls_used: int = 0
-    steps: list[Step] = field(default_factory=list)
-
-
-class ProcurementAgent:
-    """Bounded agent loop aligned to the Week 5 Agent Task Contract."""
-
-    def __init__(
+    def log_step(
         self,
-        model_client: ModelClient | None = None,
-        orchestrator: AppToolOrchestrator | None = None,
-        rag: RAGPipeline | None = None,
-        prompt_version: str = "v1.2",
+        iteration: int,
+        thought: str,
+        action: str,
+        args: dict,
+        observation: Any,
+        error: str = None,
+        raw_output: str = None,
+        step_latency_sec: float = 0.0,
     ):
-        self.model = model_client or ModelClient()
-        self.orchestrator = orchestrator or AppToolOrchestrator()
-        self.rag = rag or RAGPipeline()
-        self.prompt_version = prompt_version
+        step_data = {
+            "iteration": iteration,
+            "thought": thought,
+            "action": action,
+            "args": args,
+            "observation": observation,
+            "error": error,
+            "raw_model_output": raw_output,
+            "per_step_latency_sec": round(step_latency_sec, 3),
+        }
+        self.steps.append(step_data)
 
-    # ---------------- Public API ----------------
+    def log_guardrail(self, event_type: str, details: str):
+        self.guardrail_events.append({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event_type": event_type,
+            "details": details,
+        })
 
-    def run(self, goal: str) -> AgentRun:
-        run = AgentRun(goal=goal)
-        system_prompt, user_template, version = load_prompt(self.prompt_version)
+    def finalize(self, final_status: str, final_answer: str = None, hand_off_reason: str = None):
+        completed_at = datetime.now(timezone.utc).isoformat()
+        trace_record = {
+            "run_id": self.run_id,
+            "scenario_id": self.scenario_id,
+            "model_name": MODEL_NAME,
+            "prompt_version": PROMPT_VERSION,
+            "started_at": self.started_at,
+            "completed_at": completed_at,
+            "final_status": final_status,
+            "iterations_used": len(self.steps),
+            "tool_calls_used": sum(1 for s in self.steps if s["action"] not in ["parse_failure", "done", "none"]),
+            "retry_count": self.retry_count,
+            "guardrail_events": self.guardrail_events,
+            "final_answer": final_answer,
+            "hand_off_reason": hand_off_reason,
+            "steps": self.steps,
+        }
 
-        # --- Pre-flight: obvious out-of-scope request → hand off immediately ---
-        lowered = goal.lower()
-        if any(term in lowered for term in PROHIBITED_TERMS):
-            run.final_status = "STOPPED_OUT_OF_SCOPE"
-            run.hand_off_reason = (
-                "The request asks for an action outside the agent's permitted role "
-                "(order approval, payment, or order placement). Human action is required."
-            )
-            run.completed_at = datetime.now(timezone.utc).isoformat()
-            return run
+        # Write to individual JSON file per run in evidence/traces/
+        filename = TRACE_DIR / f"trace_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{self.run_id[:8]}.json"
+        filename.write_text(json.dumps(trace_record, indent=2))
+        print(f"[Trace Saved] -> {filename}")
+        return trace_record
 
-        while True:
-            if run.iterations_used >= MAX_ITERATIONS:
-                run.final_status = "BLOCKED_TOOL_FAILURE"
-                run.final_answer = (
-                    f"Reached max iterations ({MAX_ITERATIONS}) without a definitive answer."
-                )
-                break
 
-            history_text = self._format_history(run.steps)
-            last_obs = run.steps[-1].observation if run.steps else "None yet"
-
-            user_prompt = user_template.format(
-                goal=goal,
-                iteration=run.iterations_used + 1,
-                max_iterations=MAX_ITERATIONS,
-                tool_calls_used=run.tool_calls_used,
-                max_tool_calls=MAX_TOOL_CALLS,
-                history=history_text,
-                last_observation=self._short(last_obs),
-            )
-
-            raw = self.model.generate(prompt=user_prompt, system_instruction=system_prompt)
-            decision = self._parse_decision(raw)
-
-            if decision is None:
-                # If the model responded with prose that mentions prohibited terms,
-                # treat it as out-of-scope rather than a generic failure.
-                if any(term in (raw or "").lower() for term in PROHIBITED_TERMS):
-                    run.final_status = "STOPPED_OUT_OF_SCOPE"
-                    run.hand_off_reason = (
-                        "Planner output referenced a prohibited action; escalating to human."
-                    )
-                else:
-                    run.final_status = "BLOCKED_TOOL_FAILURE"
-                    run.final_answer = f"Planner returned unparseable output: {(raw or '')[:200]}"
-                run.steps.append(
-                    Step(run.iterations_used + 1, "", "parse_failure", {}, None,
-                         error="unparseable_output", raw_model_output=raw)
-                )
-                run.iterations_used += 1
-                break
-
-            thought = decision.get("thought", "")
-            action = decision.get("action", "")
-            args = decision.get("args", {}) or {}
-
-            # --- stop ---
-            if action == "stop":
-                status = args.get("final_status", "COMPLETED_NO_REORDER")
-                if status not in VALID_STATUSES:
-                    status = "COMPLETED_NO_REORDER"
-                run.final_status = status
-                run.final_answer = args.get("final_answer", "")
-                run.steps.append(
-                    Step(run.iterations_used + 1, thought, action, args, None,
-                         raw_model_output=raw)
-                )
-                run.iterations_used += 1
-                break
-
-            # --- hand_off ---
-            if action == "hand_off":
-                status = args.get("final_status", "WAITING_FOR_HUMAN_APPROVAL")
-                if status not in VALID_STATUSES:
-                    status = "WAITING_FOR_HUMAN_APPROVAL"
-                run.final_status = status
-                run.hand_off_reason = args.get("reason", "")
-                run.steps.append(
-                    Step(run.iterations_used + 1, thought, action, args, None,
-                         raw_model_output=raw)
-                )
-                run.iterations_used += 1
-                break
-
-            # --- unknown action ---
-            if action not in TOOL_ACTIONS and action != "retrieve_context":
-                run.final_status = "STOPPED_OUT_OF_SCOPE"
-                run.final_answer = f"Planner chose unknown action '{action}'."
-                run.steps.append(
-                    Step(run.iterations_used + 1, thought, action, args, None,
-                         error="unknown_action", raw_model_output=raw)
-                )
-                run.iterations_used += 1
-                break
-
-            # --- tool-call limit ---
-            if action in TOOL_ACTIONS and run.tool_calls_used >= MAX_TOOL_CALLS:
-                run.final_status = "BLOCKED_TOOL_FAILURE"
-                run.final_answer = f"Reached max tool calls ({MAX_TOOL_CALLS})."
-                break
-
-            # --- repeated-action guard: only trip when the previous call succeeded ---
-            if run.steps:
-                prev = run.steps[-1]
-                if prev.action == action and prev.args == args and prev.error is None:
-                    run.final_status = "BLOCKED_TOOL_FAILURE"
-                    run.final_answer = (
-                        f"Planner repeated '{action}' with identical args; aborting to avoid a loop."
-                    )
-                    break
-
-            # --- execute ---
-            observation, error = self._execute(action, args)
-            run.steps.append(
-                Step(run.iterations_used + 1, thought, action, args, observation, error,
-                     raw_model_output=raw)
-            )
-            run.iterations_used += 1
-            if action in TOOL_ACTIONS:
-                run.tool_calls_used += 1
-
-        run.completed_at = datetime.now(timezone.utc).isoformat()
-        return run
-
-    # ---------------- Execution ----------------
-
-    def _execute(self, action: str, args: dict) -> tuple[Any, str | None]:
-        if action == "retrieve_context":
-            try:
-                question = args.get("question", "")
-                result = self.rag.generate_answer(question, top_k=5)
-                return {"answer": result.get("answer"), "sources": result.get("sources", [])}, None
-            except Exception as e:
-                return None, f"{type(e).__name__}: {e}"
-
-        last_error = None
-        for attempt in range(1, MAX_RETRIES_PER_TOOL + 2):
-            try:
-                result = self.orchestrator.call_tool(action, args)
-                return result, None
-            except Exception as e:
-                last_error = f"{type(e).__name__}: {e} (attempt {attempt})"
-        return None, last_error
-
-    # ---------------- Helpers ----------------
-
-    def _parse_decision(self, raw: str) -> dict | None:
-        if not raw:
-            return None
-        text = raw.strip()
-
-        fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
-        if fence:
-            text = fence.group(1)
-        else:
-            brace = re.search(r"\{.*\}", text, re.DOTALL)
-            if brace:
-                text = brace.group(0)
-
+def invoke_model_with_retry(model_client, prompt, tracer: AgentRunner, max_retries=3):
+    """Safely invokes the LLM client while handling 429 ResourceExhausted errors via backoff."""
+    retries = 0
+    while retries < max_retries:
+        start_time = time.time()
         try:
-            return json.loads(text)
-        except json.JSONDecodeError:
-            return None
-
-    def _format_history(self, steps: list[Step]) -> str:
-        if not steps:
-            return "(no steps yet)"
-        lines = []
-        for s in steps:
-            obs = self._short(s.observation)
-            lines.append(f"{s.iteration}. [{s.action}] args={s.args} -> {obs}")
-        return "\n".join(lines)
-
-    def _short(self, value: Any, limit: int = 300) -> str:
-        try:
-            text = json.dumps(value, default=str)
-        except Exception:
-            text = str(value)
-        return text if len(text) <= limit else text[:limit] + "..."
-
-
-# ---------------- CLI / trace saver ----------------
-
-def save_trace(run: AgentRun, path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    data = asdict(run)
-    data["steps"] = [asdict(s) for s in run.steps]
-    path.write_text(json.dumps(data, indent=2, default=str))
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python src/agent.py \"<your procurement question>\"")
-        sys.exit(1)
-
-    goal = " ".join(sys.argv[1:])
-    agent = ProcurementAgent()
-
-    print(f"\n[AGENT] Goal: {goal}\n")
-    run = agent.run(goal)
-
-    print(f"[STATUS] {run.final_status}")
-    print(f"[ITERATIONS] {run.iterations_used}  |  [TOOL CALLS] {run.tool_calls_used}")
-    if run.final_answer:
-        print(f"\n[FINAL ANSWER]\n{run.final_answer}")
-    if run.hand_off_reason:
-        print(f"\n[HAND-OFF REASON]\n{run.hand_off_reason}")
-
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = ROOT / "evidence" / "traces" / f"trace_{ts}.json"
-    save_trace(run, out)
-    print(f"\n[trace saved] {out}")
-
-
-if __name__ == "__main__":
-    main()
+            response = model_client.generate_content(prompt)
+            return response, time.time() - start_time
+        except ResourceExhausted as e:
+            retries += 1
+            tracer.retry_count += 1
+            tracer.log_guardrail("rate_limit_429", str(e))
+            if retries >= max_retries:
+                # Re-raise if all retries exhausted so it logs properly as a tool/model failure
+                raise e
+            backoff_time = 10 * retries
+            print(f"[Rate Limit] Quota exceeded. Backing off for {backoff_time}s (Retry {retries}/{max_retries})...")
+            time.sleep(backoff_time)

@@ -1,0 +1,8 @@
+{"timestamp": "2026-10-09T12:38:01.563477+00:00", "event": "read_miss", "item_code": "CEM50", "detail": "no_record"}
+{"timestamp": "2026-10-09T12:38:01.568551+00:00", "event": "write", "item_code": "CEM50", "detail": "supplier=B draft=DR-20261009123801 by=Procurement Officer"}
+{"timestamp": "2026-10-09T12:38:01.608377+00:00", "event": "read_hit", "item_code": "CEM50", "detail": "supplier=B"}
+{"timestamp": "2026-10-09T12:38:01.615525+00:00", "event": "read_hit", "item_code": "CEM50", "detail": "supplier=B"}
+{"timestamp": "2026-10-09T12:38:01.623639+00:00", "event": "read_hit", "item_code": "CEM50", "detail": "supplier=B"}
+{"timestamp": "2026-10-09T12:38:01.638344+00:00", "event": "read_miss", "item_code": "NAIL1", "detail": "no_record"}
+{"timestamp": "2026-10-09T12:38:01.657647+00:00", "event": "read_error", "item_code": "*", "detail": "memory_file_unreadable"}
+{"timestamp": "2026-10-09T12:38:01.659470+00:00", "event": "read_miss", "item_code": "CEM50", "detail": "no_record"}

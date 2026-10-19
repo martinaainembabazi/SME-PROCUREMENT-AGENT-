@@ -47,7 +47,10 @@ def main():
         if scenario["id"] == "trace_01_success":
             print("--- STEP LOG ---")
             for s in run.steps:
-                print(f"  [{s.iteration}] {s.action}  args={s.args}")
+                print(
+                    f"  [{s['iteration']}] {s['action']}  "
+                    f"args={s.get('args', {})}"
+                )
             print()
 
 

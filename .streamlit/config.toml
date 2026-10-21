@@ -1,23 +1,35 @@
-# Visual theme for the web app: near-black background, mint accent, Inter type.
+# Visual theme for the web app. Users switch between light and dark in the
+# top-right menu (Settings > Theme); by default the app follows their device.
 
 [theme]
-base = "dark"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap, sans-serif"
+headingFontWeights = [800, 700, 600]
+baseRadius = "0.75rem"
+buttonRadius = "full"
+showWidgetBorder = true
+chartCategoricalColors = ["#3DDC97", "#7AA7FF", "#F5B85C", "#E8738A", "#B392F0"]
+
+[theme.dark]
 primaryColor = "#3DDC97"
 backgroundColor = "#06090A"
 secondaryBackgroundColor = "#0E1614"
 textColor = "#F2F5F4"
 linkColor = "#3DDC97"
 borderColor = "#1D2925"
-showWidgetBorder = true
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap, sans-serif"
-headingFontWeights = [800, 700, 600]
-baseRadius = "0.75rem"
-buttonRadius = "full"
 dataframeHeaderBackgroundColor = "#0E1614"
-chartCategoricalColors = ["#3DDC97", "#7AA7FF", "#F5B85C", "#E8738A", "#B392F0"]
+
+[theme.light]
+primaryColor = "#0E8A5A"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F7F6"
+textColor = "#0B0F0E"
+linkColor = "#0E8A5A"
+borderColor = "#E1E7E4"
+dataframeHeaderBackgroundColor = "#F4F7F6"
 
 [client]
-toolbarMode = "minimal"
+# "viewer" keeps the Settings menu (with the theme switch) and hides developer options.
+toolbarMode = "viewer"
 
 [browser]
 gatherUsageStats = false

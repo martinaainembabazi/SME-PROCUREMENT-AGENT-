@@ -1,6 +1,6 @@
 item_code,item_name,unit,current_qty,reorder_threshold,last_restock_date,avg_weekly_sales
-CEM50,Portland Cement 50kg,bag,12,20,2026-08-15,18
-NAIL1,Nails 1kg box,box,45,10,2026-08-28,22
-IRON30,Iron Sheets 30g,sheet,4,10,2026-08-01,6
-PAINT20,Wall Paint 20L,bucket,8,5,2026-08-20,3
-TIMB12,Timber 2x4x12ft,piece,15,30,2026-08-10,25
+RICE5,Rice 5kg,bale,8,20,2026-08-15,25
+OIL1L,Cooking Oil 1L,box,45,15,2026-08-28,30
+SUGAR1,Sugar 1kg,bag,120,50,2026-08-20,60
+SOAP1,Bar Soap 800g,box,12,30,2026-08-01,40
+MILK5,Milk Powder 500g,box,35,10,2026-08-10,15

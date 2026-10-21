@@ -101,17 +101,31 @@ AGENT_PROMPTS = {
 }
 
 
-LOGO = SRC / "assets" / "logo.svg"
 # Filled in by main() so pages can link to each other with st.page_link.
 PAGE_REFS: dict[str, Any] = {}
 
-# Colours live in .streamlit/config.toml; this adds the layout and typography details.
+LOGO = SRC / "assets" / "logo.svg"
+
+# Base colours live in .streamlit/config.toml ([theme.light] / [theme.dark]).
+# Streamlit sets `color-scheme` on the app to match the theme the viewer picked, so
+# light-dark(<light>, <dark>) below switches instantly when they change it in the menu.
 STYLES = """
 <style>
-:root { --accent: #3DDC97; --muted: #94A39D; --panel: #0E1614; --line: #1D2925; }
-#MainMenu, footer, [data-testid="stDecoration"] { display: none !important; }
+[data-testid="stApp"] {
+    --accent: light-dark(#0E8A5A, #3DDC97);
+    --muted: light-dark(#5B6B65, #94A39D);
+    --panel: light-dark(#F4F7F6, #0E1614);
+    --inset: light-dark(#FFFFFF, #0A100F);
+    --line: light-dark(#E1E7E4, #1D2925);
+    --body: light-dark(#26302C, #DCE3E0);
+    --header: light-dark(rgba(255, 255, 255, 0.9), rgba(6, 9, 10, 0.88));
+    --button-bg: light-dark(#0B0F0E, #FFFFFF);
+    --button-text: light-dark(#FFFFFF, #06090A);
+    --accent-soft: light-dark(rgba(14, 138, 90, 0.08), rgba(61, 220, 151, 0.08));
+}
+footer, [data-testid="stDecoration"] { display: none !important; }
 [data-testid="stHeader"] {
-    background: rgba(6, 9, 10, 0.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+    background: var(--header); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
 }
 [data-testid="stMainBlockContainer"], .block-container { max-width: 1280px; padding-top: 4.5rem; }
 h1 { letter-spacing: -0.025em; }
@@ -130,14 +144,14 @@ h1 { letter-spacing: -0.025em; }
     color: var(--accent); text-transform: uppercase; letter-spacing: 0.14em;
     font-size: 0.78rem; font-weight: 600; margin: 1.6rem 0 0.6rem;
 }
-.feature { display: flex; gap: 0.7rem; align-items: baseline; color: #DCE3E0; margin: 0.45rem 0; }
+.feature { display: flex; gap: 0.7rem; align-items: baseline; color: var(--body); margin: 0.45rem 0; }
 .feature b { color: var(--accent); font-weight: 600; }
 
-/* Primary actions are white pills that turn mint on hover. */
+/* Primary actions are high-contrast pills (white on dark, black on light) that turn green on hover. */
 [data-testid="stBaseButton-primary"], [data-testid="stBaseButton-primaryFormSubmit"] {
-    background: #FFFFFF !important; border: none !important; font-weight: 600; padding: 0.5rem 1.4rem;
+    background: var(--button-bg) !important; border: none !important; font-weight: 600; padding: 0.5rem 1.4rem;
 }
-[data-testid="stBaseButton-primary"] *, [data-testid="stBaseButton-primaryFormSubmit"] * { color: #06090A !important; }
+[data-testid="stBaseButton-primary"] *, [data-testid="stBaseButton-primaryFormSubmit"] * { color: var(--button-text) !important; }
 [data-testid="stBaseButton-primary"]:hover, [data-testid="stBaseButton-primaryFormSubmit"]:hover {
     background: var(--accent) !important;
 }
@@ -150,13 +164,13 @@ h1 { letter-spacing: -0.025em; }
 }
 [data-testid="stMetricValue"] { font-weight: 800; letter-spacing: -0.02em; }
 [data-testid="stExpander"] details { background: var(--panel); border-radius: 1rem; }
-[data-testid="stExpander"] [data-testid="stMetric"] { background: #0A100F; padding: 0.8rem 1rem; }
+[data-testid="stExpander"] [data-testid="stMetric"] { background: var(--inset); padding: 0.8rem 1rem; }
 [data-testid="stExpander"] [data-testid="stMetricValue"] { font-size: 1.45rem; }
 [data-testid="stForm"] { background: var(--panel); border-radius: 1rem; padding: 1.4rem; }
 [data-baseweb="tab-list"] { gap: 1.6rem; border-bottom: 1px solid var(--line); }
 [data-baseweb="tab"] p { font-weight: 600; }
 [data-testid="stPageLink"] a { border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 1rem; }
-[data-testid="stPageLink"] a:hover { border-color: var(--accent); background: rgba(61, 220, 151, 0.08); }
+[data-testid="stPageLink"] a:hover { border-color: var(--accent); background: var(--accent-soft); }
 </style>
 """
 
@@ -691,7 +705,8 @@ def page_inventory(user: dict[str, Any]) -> None:
         frame = readable(frame)
 
         def highlight(row):
-            return ["background-color: rgba(232,115,138,0.16)" if row["Status"] == "Reorder" else ""] * len(row)
+            # Translucent red reads as a highlight on both light and dark backgrounds.
+            return ["background-color: rgba(232, 115, 138, 0.18)" if row["Status"] == "Reorder" else ""] * len(row)
 
         st.dataframe(frame.style.apply(highlight, axis=1), hide_index=True, width="stretch")
     else:

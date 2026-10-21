@@ -8,8 +8,9 @@ Roles follow knowledge/policies/approval_workflow.md:
 
 Passwords are stored as bcrypt hashes in data/users.json (git-ignored).
 
-Create an account from the command line:
+Create an account, or reset a forgotten password, from the command line:
     python src/auth.py create <username> <role> "<Full Name>"
+    python src/auth.py reset-password <username>
 """
 
 from __future__ import annotations
@@ -217,20 +218,26 @@ class UserStore:
 
 
 def _cli(argv: list[str]) -> int:
-    if len(argv) != 4 or argv[0] != "create":
+    is_create = len(argv) == 4 and argv[0] == "create"
+    is_reset = len(argv) == 2 and argv[0] == "reset-password"
+    if not (is_create or is_reset):
         print(__doc__)
         return 1
-    _, username, role, full_name = argv
-    password = getpass.getpass("Password: ")
+    password = getpass.getpass("New password: ")
     if password != getpass.getpass("Repeat password: "):
         print("Passwords do not match.")
         return 1
     try:
-        user = UserStore().create_user(username, password, role, full_name)
+        if is_create:
+            _, username, role, full_name = argv
+            user = UserStore().create_user(username, password, role, full_name)
+            print(f"Created {user['username']} ({user['role_label']}).")
+        else:
+            user = UserStore().update_user(argv[1], password=password)
+            print(f"Password reset for {user['username']} ({user['role_label']}); the account is unlocked.")
     except ValueError as exc:
         print(f"Error: {exc}")
         return 1
-    print(f"Created {user['username']} ({user['role_label']}).")
     return 0
 
 

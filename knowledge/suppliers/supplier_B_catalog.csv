@@ -1,6 +1,6 @@
 item_code,item_name,unit,price_ugx,moq,lead_time_days,payment_terms,origin
-CEM50,Portland Cement 50kg,bag,31500,100,21,Net 45,Tororo
-NAIL1,Nails 1kg box,box,8900,15,5,Cash on delivery,Kampala
-IRON30,Iron Sheets 30g,sheet,43500,20,14,Net 30,Jinja
-PAINT20,Wall Paint 20L,bucket,92000,10,12,Net 30,Kampala
-TIMB12,Timber 2x4x12ft,piece,27500,50,25,50% deposit,Mbale
+RICE5,Rice 5kg,bale,82000,20,14,Net 45,Mbarara
+OIL1L,Cooking Oil 1L,box,115000,10,12,Net 30,Kampala
+SUGAR1,Sugar 1kg,bag,4300,100,10,Net 30,Kampala
+SOAP1,Bar Soap 800g,box,62000,20,15,Net 30,Mbale
+MILK5,Milk Powder 500g,box,175000,10,21,Net 45,Mbarara

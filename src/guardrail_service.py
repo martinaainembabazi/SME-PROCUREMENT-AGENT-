@@ -26,6 +26,7 @@ READ_ONLY_TOOLS = frozenset({
     "get_inventory_snapshot",
     "get_reorder_candidates",
     "compare_supplier_quotes",
+    "retrieve_context",
 })
 TOOL_ROLES = {
     "agent": READ_ONLY_TOOLS | {"create_draft_requisition"},
@@ -104,6 +105,7 @@ class GuardrailService:
             "get_inventory_snapshot": ({"item_code"}, set()),
             "get_reorder_candidates": ({"item_code"}, set()),
             "compare_supplier_quotes": ({"item_code"}, {"item_code"}),
+            "retrieve_context": ({"question"}, {"question"}),
             "create_draft_requisition": (
                 {"item_code", "quantity", "supplier_name", "notes", "draft_id"},
                 {"item_code", "quantity", "supplier_name"},

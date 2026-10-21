@@ -15,7 +15,7 @@ from orchestration import AppToolOrchestrator
 class ToolOrchestrationTests(unittest.TestCase):
     def test_get_inventory_snapshot_returns_stock_status(self):
         orchestrator = AppToolOrchestrator()
-        result = orchestrator.get_inventory_snapshot(item_code="CEM50")
+        result = orchestrator.get_inventory_snapshot(item_code="RICE5")
 
         self.assertIn("items", result)
         self.assertGreater(len(result["items"]), 0)
@@ -25,7 +25,7 @@ class ToolOrchestrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             orchestrator = AppToolOrchestrator(base_dir=Path(tmpdir))
             result = orchestrator.create_draft_requisition(
-                item_code="CEM50",
+                item_code="RICE5",
                 quantity=20,
                 supplier_name="Supplier A",
                 notes="Draft requisition for approval review."
@@ -46,7 +46,7 @@ class ToolOrchestrationTests(unittest.TestCase):
 
     def test_compare_supplier_quotes_returns_ranked_quotes(self):
         orchestrator = AppToolOrchestrator()
-        result = orchestrator.compare_supplier_quotes(item_code="CEM50")
+        result = orchestrator.compare_supplier_quotes(item_code="RICE5")
 
         self.assertIn("item_code", result)
         self.assertIn("quotes", result)

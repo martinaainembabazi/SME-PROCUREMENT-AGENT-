@@ -44,6 +44,7 @@ class SecurityControlTests(unittest.TestCase):
                 "get_inventory_snapshot",
                 "get_reorder_candidates",
                 "compare_supplier_quotes",
+                "retrieve_context",
             }),
         )
         with self.assertRaises(ValueError):

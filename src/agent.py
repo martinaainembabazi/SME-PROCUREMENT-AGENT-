@@ -67,6 +67,11 @@ class ProcurementAgent:
         self.max_iterations = self.guardrails.max_iterations
         self.max_tool_calls = self.guardrails.max_tool_calls
         self.system_prompt, self.user_template, self.prompt_version = load_prompt()
+        self.system_prompt += (
+            "\n\nCRITICAL INSTRUCTION: You must output ONLY a single valid JSON object. "
+            "Do NOT use markdown formatting (no ```json). "
+            "Do NOT include any conversational text before or after the JSON."
+        )
 
     def _generate(self, prompt: str) -> str:
         if self.model_client is None:
@@ -136,6 +141,19 @@ class ProcurementAgent:
             try:
                 decision = self.guardrails.validate_planner_output(raw_output)
             except (ValueError, TypeError) as exc:
+                steps.append({
+                    "iteration": iteration,
+                    "action": "parse_failure",
+                    "error": str(exc),
+                })
+                return AgentRun(
+                    final_status="BLOCKED_TOOL_FAILURE",
+                    iterations_used=iteration,
+                    tool_calls_used=tool_calls_used,
+                    steps=steps,
+                    hand_off_reason=f"Planner response was rejected: {exc}",
+                )
+            except (ValueError, TypeError, RuntimeError) as exc:
                 steps.append({
                     "iteration": iteration,
                     "action": "parse_failure",
@@ -366,3 +384,29 @@ def invoke_model_with_retry(model_client, prompt, tracer: AgentRunner, max_retri
             backoff_time = 10 * retries
             print(f"[Rate Limit] Quota exceeded. Backing off for {backoff_time}s (Retry {retries}/{max_retries})...")
             time.sleep(backoff_time)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python src/agent.py \"<your procurement question>\"")
+        sys.exit(1)
+
+    goal = " ".join(sys.argv[1:])
+    
+    print(f"\n[AGENT] Goal: {goal}")
+    print("Thinking...\n")
+    
+    # Run the agent
+    agent = ProcurementAgent()
+    result = agent.run(goal)
+    
+    # Print the final result to the terminal
+    print(f"\n[STATUS] {result.final_status}")
+    print(f"[ITERATIONS] {result.iterations_used} | [TOOL CALLS] {result.tool_calls_used}")
+    
+    if result.final_answer:
+        print(f"\n[FINAL ANSWER]\n{result.final_answer}")
+        
+    if result.hand_off_reason:
+        print(f"\n[HAND-OFF REASON]\n{result.hand_off_reason}")
+        
+    print("\nRun complete. Check evidence/traces/ for the telemetry trace.")

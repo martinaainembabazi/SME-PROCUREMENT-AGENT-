@@ -1,0 +1,11 @@
+{
+  "request_id": "QR-001",
+  "date": "2026-09-10",
+  "prepared_by": "SME Procurement Agent (simulated)",
+  "items": [
+    {"item_code": "RICE5", "item_name": "Rice 5kg", "qty": 50, "unit": "bale"},
+    {"item_code": "SOAP1", "item_name": "Bar Soap 800g", "qty": 20, "unit": "box"}
+  ],
+  "suppliers_contacted": ["A", "B", "C"],
+  "notes": "For comparison purposes only. No orders placed."
+}

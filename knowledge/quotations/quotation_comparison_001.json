@@ -1,0 +1,33 @@
+{
+  "request_id": "QR-001",
+  "comparison": [
+    {
+      "item_code": "RICE5",
+      "quotes": [
+        {"supplier": "A", "price_ugx": 85000, "moq": 10, "lead_time_days": 7, "payment_terms": "Net 30"},
+        {"supplier": "B", "price_ugx": 82000, "moq": 20, "lead_time_days": 14, "payment_terms": "Net 45"},
+        {"supplier": "C", "price_ugx": 88000, "moq": 5, "lead_time_days": 3, "payment_terms": "Cash on delivery"}
+      ],
+      "notes": "Supplier B cheapest but 14-day lead time; Supplier C fastest but highest price."
+    },
+    {
+      "item_code": "OIL1L",
+      "quotes": [
+        {"supplier": "A", "price_ugx": 120000, "moq": 5, "lead_time_days": 5, "payment_terms": "Cash on delivery"},
+        {"supplier": "B", "price_ugx": 115000, "moq": 10, "lead_time_days": 12, "payment_terms": "Net 30"},
+        {"supplier": "C", "price_ugx": 125000, "moq": 5, "lead_time_days": 2, "payment_terms": "Cash on delivery"}
+      ],
+      "notes": "Supplier B cheapest but higher MOQ. Supplier C fastest."
+    },
+    {
+      "item_code": "SUGAR1",
+      "quotes": [
+        {"supplier": "A", "price_ugx": 4500, "moq": 50, "lead_time_days": 4, "payment_terms": "Net 15"},
+        {"supplier": "B", "price_ugx": 4300, "moq": 100, "lead_time_days": 10, "payment_terms": "Net 30"},
+        {"supplier": "C", "price_ugx": 4700, "moq": 25, "lead_time_days": 3, "payment_terms": "Net 15"}
+      ],
+      "notes": "Supplier B cheapest but 100 bag MOQ. Supplier A best balance."
+    }
+  ],
+  "decision_status": "pending_human_review"
+}

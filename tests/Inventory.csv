@@ -1,0 +1,7 @@
+item,quantity_on_hand,reorder_threshold,shelf_life_days
+Fresh Milk 1L,8,20,7
+White Rice 5kg,15,30,365
+Bottled Water 1.5L,50,40,730
+Canned Beans 400g,10,15,730
+Cooking Oil 3L,25,10,365
+Bakery Flour 2kg,0,0,180

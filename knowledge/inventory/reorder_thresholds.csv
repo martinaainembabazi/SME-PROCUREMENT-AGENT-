@@ -1,0 +1,6 @@
+item_code,item_name,criticality,min_stock,max_stock,notes
+RICE5,Rice 5kg,High,20,100,Staple food; high turnover
+OIL1L,Cooking Oil 1L,High,15,80,Essential good; steady demand
+SUGAR1,Sugar 1kg,High,50,200,High volume; frequent reorder
+SOAP1,Bar Soap 800g,Medium,30,120,Household essential
+MILK5,Milk Powder 500g,Medium,10,40,Moderate demand

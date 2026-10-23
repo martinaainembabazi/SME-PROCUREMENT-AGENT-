@@ -1,0 +1,7 @@
+{
+  "scenario": "4_draft_rejected_no_write",
+  "expected": "Nothing written to memory.",
+  "memory_before": null,
+  "memory_after": null,
+  "note": "Rejected drafts never reach the approval path, so no write occurs."
+}

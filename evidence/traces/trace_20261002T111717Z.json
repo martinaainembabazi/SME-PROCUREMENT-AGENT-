@@ -1,0 +1,11 @@
+{
+  "goal": "What should we reorder this week?",
+  "started_at": "2026-10-02T11:17:16.821872+00:00",
+  "completed_at": "2026-10-02T11:17:17.125321+00:00",
+  "final_status": "BLOCKED_TOOL_FAILURE",
+  "final_answer": "Planner returned unparseable output: [MODEL ERROR] ConnectError: [Errno 11001] getaddrinfo failed",
+  "hand_off_reason": null,
+  "iterations_used": 0,
+  "tool_calls_used": 0,
+  "steps": []
+}

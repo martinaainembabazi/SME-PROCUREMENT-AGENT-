@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="40" viewBox="0 0 200 40">
+  <!-- Colours chosen to read on both the light (#FFFFFF) and dark (#06090A) themes. -->
+  <rect x="2" y="4" width="32" height="32" rx="9" fill="#1DB57A"/>
+  <path d="M10 15h3l2.2 9.5a1.6 1.6 0 0 0 1.6 1.2h7.4a1.6 1.6 0 0 0 1.5-1.1L28 18H14.2" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="17.5" cy="29.5" r="1.6" fill="#FFFFFF"/>
+  <circle cx="24" cy="29.5" r="1.6" fill="#FFFFFF"/>
+  <text x="44" y="27" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="19" font-weight="800" fill="#1DB57A" letter-spacing="-0.3">CAC <tspan fill="#7C8C86">Procure</tspan></text>
+</svg>

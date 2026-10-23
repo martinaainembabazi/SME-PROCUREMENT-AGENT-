@@ -1,0 +1,12 @@
+## USER REQUEST
+{goal}
+
+## CURRENT STATE (iteration {iteration} of {max_iterations}, tool calls used: {tool_calls_used} of {max_tool_calls})
+
+## STEP HISTORY
+{history}
+
+## LAST OBSERVATION
+{last_observation}
+
+Decide the next single action. Return only the JSON decision object.

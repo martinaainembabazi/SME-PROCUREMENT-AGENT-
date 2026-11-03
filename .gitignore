@@ -1,0 +1,22 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+.DS_Store
+
+# Windows system files
+desktop.ini
+Thumbs.db
+~$*
+
+# Runtime artifacts from agent demos
+evidence/drafts/*.json
+evidence/chroma/
+
+# Web app accounts (bcrypt hashes)
+data/
+
+# Local project write-up (not for GitHub)
+How_The_Project_Works.docx

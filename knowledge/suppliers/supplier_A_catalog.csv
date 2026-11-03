@@ -1,0 +1,6 @@
+item_code,item_name,unit,price_ugx,moq,lead_time_days,payment_terms,origin
+RICE5,Rice 5kg,bale,85000,10,7,Net 30,Kampala
+OIL1L,Cooking Oil 1L,box,120000,5,5,Cash on delivery,Kampala
+SUGAR1,Sugar 1kg,bag,4500,50,4,Net 15,Kampala
+SOAP1,Bar Soap 800g,box,65000,10,10,Net 30,Jinja
+MILK5,Milk Powder 500g,box,180000,5,14,Net 30,Kampala

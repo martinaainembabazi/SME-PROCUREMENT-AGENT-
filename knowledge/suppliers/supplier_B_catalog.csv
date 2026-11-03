@@ -1,0 +1,6 @@
+item_code,item_name,unit,price_ugx,moq,lead_time_days,payment_terms,origin
+RICE5,Rice 5kg,bale,82000,20,14,Net 45,Mbarara
+OIL1L,Cooking Oil 1L,box,115000,10,12,Net 30,Kampala
+SUGAR1,Sugar 1kg,bag,4300,100,10,Net 30,Kampala
+SOAP1,Bar Soap 800g,box,62000,20,15,Net 30,Mbale
+MILK5,Milk Powder 500g,box,175000,10,21,Net 45,Mbarara
